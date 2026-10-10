@@ -133,7 +133,7 @@ application, which the compiler would happily run against.
 | `check` says a section is missing | that skill has not run. It names which one |
 | `verify-auth` says `failed` | the login read out of your source is wrong. The observations show which step broke |
 | the map stopped short in a module | its budget ran out. `map.notes` names what was skipped; raise `CRAWL_MAX_SCREENS_PER_MODULE` or `--per-module-seconds` |
-| the deep crawl reached few screens | it only follows `<a href>`, and most business apps do not link their screens. Add the map's screen URLs to `CRAWL_SEED_ROUTES` |
+| the deep crawl reached few screens | it is seeded with every screen in `map`, then follows `<a href>`. Few screens means the map was empty or missing when it started — run `npm run crawl:map` first, then a fresh `npm run crawl:deep` (not `--resume`, whose queue was fixed at the start). The `[explore] N seeds` line says how many it began with |
 | a screen scores high but holds only navigation | the page rendered nothing for this user — no data, no permission. Record the flow, or crawl as a user who has the data |
 | a screen is `crawled: false` | the source declares it and no crawl reached it — usually a form behind an "Add" or "Edit" button. Record it |
 | `check` says the clone moved | the analysis describes an older commit. Re-run the skills, then compile |

@@ -137,10 +137,10 @@ npm run pipeline:test        # config, explorer, compiler, analysis and api-auth
 npm run pipeline:typecheck
 ```
 
-**The deep crawl only follows `<a href>`.** On an app whose screens hang off menus it
-reaches a fraction of what the map found. Seed it with the map's screen URLs
-(`CRAWL_SEED_ROUTES`) — the process environment overrides `.env`, so a one-off wider
-crawl needs no edit to the user's file.
+**The map seeds the deep crawl.** Links alone reach a fraction of a menu-driven app — 22 of
+OrangeHRM's 74 mapped screens — so `explore.mjs` starts from every screen URL in `map`
+(same origin, `CRAWL_EXCLUDE` honoured) besides the base URL and `CRAWL_SEED_ROUTES`, and
+visits all of them whatever `CRAWL_MAX_SCREENS` says. Map first, then crawl deep.
 
 ## The corpus
 

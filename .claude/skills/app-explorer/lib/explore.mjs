@@ -11,6 +11,7 @@ import { loadEnv, loadProfile, resolveEnvValue, ROOT } from '../../../../scripts
 import { playwrightCliArgv } from '../../../../scripts/config/playwright-cli.mjs';
 import { buildBundle } from './build-bundle.mjs';
 import { writeScreensSection } from './write-screens.mjs';
+import { routeId, sameApp, excluded, seedTargets } from './seeds.mjs';
 
 const run = promisify(execFile);
 
@@ -49,60 +50,34 @@ const batchSize = Number(flag('batch-size', settings.batchSize));
 
 const log = (...parts) => console.log('[explore]', ...parts);
 
-// A route's identity is its path with record ids replaced by a slot, so a list of
-// a thousand contacts contributes one detail screen rather than a thousand.
-const ID_PATTERNS = [
-  /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi,
-  /\b[0-9a-f]{16,}\b/gi,
-  /\b\d{3,}\b/g,
-];
-
-function templatize(url) {
-  let out = url;
-  for (const pattern of ID_PATTERNS) out = out.replace(pattern, '{id}');
-  return out;
-}
-
-function routeId(url, baseUrl) {
-  const relative = templatize(url).replace(baseUrl.replace(/\/$/, ''), '') || '/';
-  const slug = relative.replace(/^[/#?]+/, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return slug || 'root';
-}
-
-function sameApp(url, baseUrl) {
+// The map is read, never written: it is map.mjs's output. A checkout that has not
+// been mapped yet starts from the base URL and CRAWL_SEED_ROUTES alone.
+async function readMap() {
   try {
-    return new URL(url).origin === new URL(baseUrl).origin;
+    return JSON.parse(await readFile(join(outDir, 'analysis.json'), 'utf8')).map || null;
   } catch {
-    return false;
+    return null;
   }
-}
-
-function excluded(url, patterns) {
-  return (patterns || []).some((pattern) => new RegExp(pattern).test(url));
 }
 
 async function loadState() {
   if (has('resume') && existsSync(statePath)) {
     return JSON.parse(await readFile(statePath, 'utf8'));
   }
-  const seeds = [
-    profile.baseUrl,
-    ...(profile.seedRoutes || []).map((route) =>
-      String(route).startsWith('http') ? route : profile.baseUrl.replace(/\/$/, '') + route),
-  ];
-  const pending = [];
-  const seen = new Set();
-  for (const url of seeds) {
-    const id = routeId(url, profile.baseUrl);
-    if (seen.has(id)) continue;
-    seen.add(id);
-    pending.push({ id, url, depth: 0 });
-  }
+  const pending = seedTargets({
+    baseUrl: profile.baseUrl,
+    seedRoutes: profile.seedRoutes || [],
+    exclude: profile.exclude || [],
+    map: await readMap(),
+  });
   // `queued` records every id the crawl has ever taken an interest in. Without
   // it, a screen that is in flight — spliced out of `pending` but not yet
   // visited — gets enqueued a second time by whatever links to it.
   const queued = Object.fromEntries(pending.map((target) => [target.id, true]));
-  return { pending, queued, visited: {}, failed: {}, authenticated: false, startedAt: new Date().toISOString() };
+  return {
+    pending, queued, seeded: pending.length,
+    visited: {}, failed: {}, authenticated: false, startedAt: new Date().toISOString(),
+  };
 }
 
 async function saveState(state) {
@@ -135,6 +110,10 @@ if (has('reports-only')) {
 }
 
 const state = await loadState();
+// The budget bounds discovery, never the screens already known to exist: every seed is
+// visited, and CRAWL_MAX_SCREENS only limits what links add beyond a smaller seed set.
+const screenBudget = Math.max(maxScreens, state.seeded || 0);
+log(`${state.seeded ?? '?'} seeds (base URL, CRAWL_SEED_ROUTES, map) — budget ${screenBudget} screens`);
 const network = existsSync(networkPath) && has('resume')
   ? JSON.parse(await readFile(networkPath, 'utf8'))
   : [];
@@ -154,7 +133,7 @@ const authConfig = profile.auth
 
 let batches = 0;
 let consecutiveFailures = 0;
-while (state.pending.length && Object.keys(state.visited).length < maxScreens) {
+while (state.pending.length && Object.keys(state.visited).length < screenBudget) {
   // A crawl that cannot reach the browser at all should stop and say so rather
   // than burn the whole queue producing identical failures.
   if (consecutiveFailures >= 3) {
@@ -217,7 +196,7 @@ while (state.pending.length && Object.keys(state.visited).length < maxScreens) {
       if (excluded(absolute, profile.exclude)) continue;
       const id = routeId(absolute, profile.baseUrl);
       if (state.queued[id]) continue;
-      if (Object.keys(state.queued).length >= maxScreens) break;
+      if (Object.keys(state.queued).length >= screenBudget) break;
       state.queued[id] = true;
       state.pending.push({ id, url: absolute, depth: depth + 1 });
     }

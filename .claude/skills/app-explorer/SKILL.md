@@ -63,6 +63,13 @@ only menu entries — so a map can be taken against an environment you care abou
 The map is the coarse layer. The deep crawl sharpens the screens that matter, and a recorded
 session sharpens them further still.
 
+**The map seeds the deep crawl.** `explore.mjs` starts from the base URL, `CRAWL_SEED_ROUTES`,
+and every `map.modules[].screens[].url` in `analysis.json` (`lib/seeds.mjs`) — same origin only,
+`CRAWL_EXCLUDE` honoured, one target per route id — and only then follows `<a href>`. So run
+the map first: on OrangeHRM links alone reached 22 screens, the map's 74 seeds reach them all.
+Every seed is visited whatever `CRAWL_MAX_SCREENS` says; the budget bounds what links add on
+top. With no map yet, the crawl starts from the base URL and `CRAWL_SEED_ROUTES` as before.
+
 ## Running it
 
 ```bash
@@ -79,7 +86,8 @@ node .claude/skills/app-explorer/lib/probe-openapi.mjs
 node .claude/skills/app-explorer/lib/explore.mjs --reports-only
 ```
 
-Useful flags: `--resume` continues an interrupted crawl from `.crawl/crawl-state.json`,
+Useful flags: `--resume` continues an interrupted crawl from `.crawl/crawl-state.json` (its
+queue was seeded when the crawl started; a map taken since is picked up by a fresh run),
 `--max-screens N` and `--batch-size N` override the profile's budget.
 
 ## Targeting a new app
