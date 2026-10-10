@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="qa-harness" width="440">
+<img src="assets/logo.png" alt="qa-context" width="440">
 
 **Point it at a web app. Get one file that tells an agent everything it needs to write a test.**
 
 Every screen, every control on it, a locator proved to match exactly one element, and the API behind it.
 
-[![CI](https://github.com/banovski1/qa-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/banovski1/qa-harness/actions/workflows/ci.yml)
+[![CI](https://github.com/banovski1/qa-context/actions/workflows/ci.yml/badge.svg)](https://github.com/banovski1/qa-context/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Node 22+](https://img.shields.io/badge/node-22%2B-5FA04E.svg)](https://nodejs.org)
 [![Sponsor](https://img.shields.io/badge/sponsor-%E2%9D%A4-db61a2.svg)](https://github.com/sponsors/banovski1)
@@ -81,7 +81,7 @@ could create or change data. Point it at staging first anyway.
 ### 1 · Install
 
 ```bash
-git clone https://github.com/banovski1/qa-harness.git && cd qa-harness
+git clone https://github.com/banovski1/qa-context.git && cd qa-context
 npm install
 npm run pipeline:test    # if these pass, the pipeline itself is sound
 ```
@@ -255,7 +255,7 @@ the crawl proved it resolves to one element. A screen the crawl couldn't reach i
 and asks for a recording.
 
 If that resonates, or you want to talk about testing, agents, or any of the decisions
-above, [open an issue](https://github.com/banovski1/qa-harness/issues) or find me on
+above, [open an issue](https://github.com/banovski1/qa-context/issues) or find me on
 [GitHub](https://github.com/banovski1).
 
 ---
@@ -271,7 +271,7 @@ above, [open an issue](https://github.com/banovski1/qa-harness/issues) or find m
 
 ## Support this project
 
-qa-harness is Apache-2.0 and free to use. If it saved your agents a week of guessing,
+qa-context is Apache-2.0 and free to use. If it saved your agents a week of guessing,
 [**sponsor it**](https://github.com/sponsors/banovski1). It funds the corpus of apps every
 crawler change is validated against.
 

@@ -1,5 +1,5 @@
 {
-  "name": "qa-harness",
+  "name": "qa-context",
   "version": "1.0.0",
   "private": true,
   "description": "Point it at a web app - its source and a running instance - and get one analysis.json: every screen, every control, a proven locator for each, and the API behind them. Context an LLM can write tests from.",
@@ -15,13 +15,13 @@
   ],
   "license": "Apache-2.0",
   "author": "Tsvetomir Banovski",
-  "homepage": "https://github.com/banovski1/qa-harness#readme",
+  "homepage": "https://github.com/banovski1/qa-context#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/banovski1/qa-harness.git"
+    "url": "git+https://github.com/banovski1/qa-context.git"
   },
   "bugs": {
-    "url": "https://github.com/banovski1/qa-harness/issues"
+    "url": "https://github.com/banovski1/qa-context/issues"
   },
   "engines": {
     "node": ">=22"

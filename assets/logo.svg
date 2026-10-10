@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="303" viewBox="0 0 880 303">
+  <defs>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2557B5"/>
+      <stop offset="1" stop-color="#0B3A86"/>
+    </linearGradient>
+    <linearGradient id="handle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2E63C4"/>
+      <stop offset="1" stop-color="#123F8E"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0B2A5E" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="880" height="303" fill="#FFFFFF"/>
+
+  <!-- handle, with the strap loop -->
+  <g transform="translate(196 214) rotate(45)" filter="url(#soft)">
+    <rect x="0" y="-25" width="92" height="50" rx="12" fill="url(#handle)"/>
+    <rect x="40" y="-33" width="28" height="66" rx="9" fill="#123F8E" stroke="#FFFFFF" stroke-width="6"/>
+  </g>
+
+  <!-- lens -->
+  <circle cx="128" cy="140" r="114" fill="url(#ring)" filter="url(#soft)"/>
+  <circle cx="128" cy="140" r="90" fill="#FFFFFF"/>
+  <circle cx="128" cy="140" r="90" fill="none" stroke="#0B3A86" stroke-opacity="0.12" stroke-width="2"/>
+
+  <!-- browser window -->
+  <rect x="68" y="80" width="122" height="104" rx="11" fill="#FFFFFF" stroke="#173F86" stroke-width="7"/>
+  <path d="M68 91 a11 11 0 0 1 11 -11 h100 a11 11 0 0 1 11 11 v13 h-122 z" fill="#173F86"/>
+  <circle cx="84" cy="93" r="4.5" fill="#E8473F"/>
+  <circle cx="99" cy="93" r="4.5" fill="#F2B33D"/>
+  <circle cx="114" cy="93" r="4.5" fill="#2DB37A"/>
+  <rect x="82" y="118" width="88" height="14" rx="4" fill="#C9D3E3"/>
+  <rect x="82" y="142" width="58" height="7" rx="3.5" fill="#C9D3E3"/>
+  <rect x="82" y="157" width="44" height="7" rx="3.5" fill="#C9D3E3"/>
+
+  <!-- check -->
+  <circle cx="180" cy="168" r="23" fill="#1BA672" stroke="#FFFFFF" stroke-width="5"/>
+  <path d="M169 168 l7.5 7.5 l14 -15" fill="none" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- wordmark -->
+  <text x="262" y="172" font-family="'Century Gothic', Outfit, 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="112" letter-spacing="-1">
+    <tspan fill="#1F55B0">qa</tspan><tspan fill="#20A58A">-</tspan><tspan fill="#142B47">context</tspan>
+  </text>
+</svg>
