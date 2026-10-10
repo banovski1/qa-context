@@ -259,6 +259,42 @@ function regionOf(el) {
   return 'body';
 }
 
+// Every heading the user can see, the screen's own first. All six levels and
+// role="heading", because a design system styles its page title as whatever level
+// suits the type scale — OrangeHRM's are h5 and h6, and an h1-h3 query recorded no
+// heading on any of its screens. A heading in the shell (header, navigation, footer)
+// or a dialog is kept but sorted after the content's: the compiler reads the first
+// one as the screen's identity, and a module breadcrumb shared by every screen in the
+// module identifies none of them.
+var HEADING_SELECTOR = 'h1,h2,h3,h4,h5,h6,[role="heading"]';
+var SHELL_REGIONS = { header: 1, navigation: 1, footer: 1, dialog: 1 };
+
+function collectHeadings() {
+  var found = Array.prototype.slice.call(document.querySelectorAll(HEADING_SELECTOR))
+    .filter(isVisible)
+    .map(function (h, order) {
+      // innerText, not textContent: a breadcrumb heading built from two spans yields
+      // "Contactscreate" under textContent, which is a heading no assertion can use.
+      var text = (h.innerText || h.textContent || '').replace(/\s+/g, ' ').trim();
+      var tag = /^H([1-6])$/.exec(h.tagName);
+      // aria-level wins over the tag, as it does in the accessibility tree; a bare
+      // role="heading" defaults to level 2 there.
+      var level = Number(h.getAttribute('aria-level')) || (tag ? Number(tag[1]) : 2);
+      return {
+        level: level,
+        text: text.slice(0, 120),
+        // The y coordinate is what lets the compiler say which section a repeated
+        // label sits in — the disambiguator a person uses, and the only evidence of it here.
+        y: Math.round(h.getBoundingClientRect().y),
+        shell: !!SHELL_REGIONS[regionOf(h)],
+        order: order,
+      };
+    })
+    .filter(function (h) { return h.text; });
+  found.sort(function (a, b) { return (a.shell - b.shell) || (a.order - b.order); });
+  return found.map(function (h) { return { level: h.level, text: h.text, y: h.y }; });
+}
+
 // Attributes an application uses to name a region or a field on purpose. An
 // ancestor carrying one is a far better anchor than the markup path to it.
 var ANCHOR_ATTRIBUTES = ['data-name', 'data-field', 'data-view', 'data-panel', 'data-role', 'data-id'];
@@ -517,14 +553,7 @@ function __extractScreen(options) {
     return { href: a.getAttribute('href'), resolved: a.href, text: textOf(a).slice(0, 80) };
   });
 
-  var headings = Array.prototype.slice.call(document.querySelectorAll('h1,h2,h3')).map(function (h) {
-    // innerText, not textContent: a breadcrumb heading built from two spans yields
-    // "Contactscreate" under textContent, which is a heading no assertion can use.
-    var text = (h.innerText || h.textContent || '').replace(/\s+/g, ' ').trim();
-    // The y coordinate is what lets the compiler say which section a repeated label
-    // sits in — the disambiguator a person uses, and the only evidence of it here.
-    return { level: Number(h.tagName.slice(1)), text: text.slice(0, 120), y: Math.round(h.getBoundingClientRect().y) };
-  }).filter(function (h) { return h.text; });
+  var headings = collectHeadings();
 
   var tables = collectTables();
 
