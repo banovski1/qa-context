@@ -29,19 +29,14 @@ body:
         - crawl (map or deep)
         - verify-auth
         - compile / check
-        - draft / generate
-        - the generated framework at run time
-        - the test-writing agents
     validations: { required: true }
   - type: textarea
     id: logs
     attributes:
       label: Evidence
       description: |
-        For a run-time failure, the relevant lines of
-        `generated-framework/test-results/framework.log.jsonl` — one JSON record per
-        interaction. The lines *before* the failure show how the control was being
-        addressed. For a compile failure, `npm run check` output.
+        `npm run check` output, and for a crawl problem the `notes` and `errors` of the
+        relevant section of analysis.json.
       render: text
   - type: input
     id: app

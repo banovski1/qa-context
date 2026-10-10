@@ -115,7 +115,7 @@ export interface AnalysisScreen {
   links: { href: string; resolved: string; text: string }[];
 
   // --- derived, by compile-model.ts ---
-  /** The generated page object's class name. */
+  /** The screen's page-object class name, e.g. `ApplyLeavePage`. */
   name?: string;
   /** Crawled URLs that fold onto this screen's declared parameterised route. */
   aliases?: string[];

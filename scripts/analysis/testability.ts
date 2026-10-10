@@ -93,7 +93,7 @@ function recordedOnlyScore(screen: AnalysisScreen): ScreenTestability {
     // Never above the threshold, however clean the recorded controls look. Every one of
     // them resolved once, for one person, on one visit; a crawled screen at 1.0 has had
     // each of its handles counted against the whole page. "Enough to write the test" is
-    // the most a recording can honestly claim, and it is also all a test-writer needs.
+    // the most a recording can honestly claim, and it is also all a test author needs.
     confidence: Math.min(scored.confidence, CONFIDENT),
     missing: [...scored.missing, 'the crawl has not proved these locators unique — only the recording resolved them'],
   };

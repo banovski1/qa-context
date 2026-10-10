@@ -230,9 +230,9 @@ export function mergeRecordings(analysis: Analysis): Analysis {
       // and append a second copy of it on every compile.
       const already = screen.actions.some(a => a.via === camel(t.via) && a.leadsTo === t.to);
       if (already) continue;
-      // `via` is the property name the page object will carry, not the label — the
-      // generator emits `await this.<via>.click()`, and a label with a space in it is not
-      // a property. It is the same `camel(label)` the compiler uses to name the control.
+      // `via` is the property name the control carries in `uses`, not the label — a test
+      // calls `await this.<via>.click()`, and a label with a space in it is not a
+      // property. It is the same `camel(label)` the compiler uses to name the control.
       screen.actions.push({
         name: 'goTo' + pascal(t.via), via: camel(t.via), leadsTo: t.to, provenBy: 'recording',
       });

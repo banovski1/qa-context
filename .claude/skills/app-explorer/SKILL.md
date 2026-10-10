@@ -198,8 +198,8 @@ the locators that will break first, and the controls worth fixing upstream.
 
 The `screens` section is the contract. Each control
 carries `locator` (the chosen one), `candidates` (all of them, with match
-counts), `unique`, `fragile`, `region`, `visible` and `destructive`. A framework
-generator should read the JSON; a human should read the markdown.
+counts), `unique`, `fragile`, `region`, `visible` and `destructive`. An agent writing tests
+reads the JSON; so does anything else that wants to know what is on a screen.
 
 Counts in the reports cover **visible** controls only. Hidden ones — collapsed
 menus, closed dropdowns — stay in the JSON but are excluded from the totals,

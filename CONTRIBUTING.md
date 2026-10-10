@@ -21,10 +21,8 @@ it does (`fix/ambiguous-locator-report`), open the PR.
 
 ```bash
 npm install
-npm run setup             # the generator's own toolchain
 npm run pipeline:test     # the compiler and analysis suites
 npm run pipeline:typecheck
-npm run hooks:test        # the write-guard rule set
 ```
 
 All four run in CI on every PR. A change to `scripts/model-compiler/` without a
@@ -47,10 +45,6 @@ the PR which apps you checked.
 **Locators live in exactly one layer.** If your change puts a CSS selector
 anywhere outside a component class, `assertNoSelectors` will fail and it is right.
 
-**The write hooks apply to you too.** `.claude/hooks/rules/` rejects writes that
-break the repo's rules, with the fix named in the rejection. Adding a rule means
-adding a fixture in `.claude/hooks/__fixtures__/`.
-
 ## What not to send
 
 - Hand-edits to `analysis.json`. It is produced. Fix the skill that wrote it.
@@ -62,8 +56,8 @@ adding a fixture in `.claude/hooks/__fixtures__/`.
 
 ## Reporting things
 
-- A bug: the issue template asks for `npm run preflight` output and the relevant
-  lines of `test-results/framework.log.jsonl`. Those two answer most questions.
+- A bug: the issue template asks for `npm run preflight` and `npm run check` output.
+  Those two answer most questions.
 - A vulnerability: privately. See [`SECURITY.md`](SECURITY.md).
 
 ## Licence

@@ -1,17 +1,4 @@
 {
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/guard-write.mjs"
-          }
-        ]
-      }
-    ]
-  },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true
   }

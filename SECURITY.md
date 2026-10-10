@@ -18,8 +18,7 @@ This repository generates code and drives a browser against an application
 | --- | --- |
 | `.env` handling | it holds the credentials for the app under test |
 | `recordings/` and `analysis.json` | a recording is redacted before it is written; a leak of a real password into either is a vulnerability |
-| `scripts/framework-generator/emit/` | it writes files to disk from analysis data — a path escape is a vulnerability |
-| `.claude/hooks/` | the write guard is a safety boundary; a bypass is a vulnerability |
+| `scripts/analysis/write-section.ts` | it writes `analysis.json` from crawl and recording data — a path escape is a vulnerability |
 
 ## What is not
 

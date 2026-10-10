@@ -1,4 +1,0 @@
-{
-  "extends": "../../tsconfig.base.json",
-  "include": ["./*.ts", "./emit/*.ts", "./emit/runtime/**/*.ts", "./__tests__/*.ts", "../model-compiler/*.ts", "../api-auth/*.ts", "../analysis/*.ts"]
-}

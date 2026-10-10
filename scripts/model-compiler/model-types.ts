@@ -46,7 +46,7 @@ export interface ComponentDef {
 
 export interface ComponentUse extends Identity {
   component: string;
-  /** The property name on the generated page object. */
+  /** The property name a page object for this screen would carry. */
   as: string;
   /** Collections only: the columns observed, and the one that identifies a row. */
   columns?: string[];
@@ -74,8 +74,7 @@ export interface Screen {
   unverified: number;
   /**
    * The compiler's answer to "is there enough here to address what a test would touch?"
-   * The generator never acts on it; the draft shows it, because a reviewer approving a
-   * page object deserves to know what it was built from.
+   * Whoever writes a test against this screen deserves to know what it was built from.
    */
   testability?: {
     confidence: number;

@@ -156,7 +156,7 @@ test('a navigation the crawl never proved becomes an action, marked recording-pr
   const merged = mergeRecordings(a);
   const list = merged.screens.find(s => s.path === '/pim/viewEmployeeList')!;
 
-  // `via` is the property the page object will carry, because the generator emits
+  // `via` is the property the page object will carry, because a test calls
   // `await this.<via>.click()` — a label with a space in it is not a property name.
   // `leadsTo` is still a path here; the compiler resolves it to a class name later, when
   // page names exist.

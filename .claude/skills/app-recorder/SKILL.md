@@ -26,8 +26,8 @@ npx tsx -e "import {loadProfile} from './scripts/config/profile.mjs'; console.lo
 ```
 
 `APP_BASE_URL`, `APP_SESSION` and the `AUTH_*` block all come from the root `.env`.
-**Never hardcode a URL or a credential, and never read one from
-`generated-framework/.env`** — the app under test is described in one place.
+**Never hardcode a URL or a credential** — the app under test is described in one
+place.
 
 If `APP_BASE_URL` is unset, stop and say `cp .env.example .env`. Do not guess a URL.
 
@@ -136,8 +136,6 @@ quote it rather than inventing advice, and never propose recording the same flow
 - `playwright-cli` is the only thing that drives a browser here. This skill is not an
   exception to that rule — it is the reason the exception was removed.
 - Never hardcode `APP_BASE_URL` or a credential. One `.env`, one app.
-- Never write under `generated-framework/` — it is hook-protected, and this is not
-  generator input.
 - Never hand-edit `analysis.json`. `ingest-recording.ts` writes two sections through
   `write-section.ts`; nothing else touches the file.
 - Raw `playwright-cli` output stays in `.playwright-cli/` and is gitignored. Only the two

@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["scripts/model-compiler/*.ts", "scripts/api-auth/*.ts", "scripts/analysis/*.ts"]
+}

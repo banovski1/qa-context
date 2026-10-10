@@ -1,7 +1,7 @@
 // The failures that are silent.
 //
-// A stale analysis still parses and still generates a framework — one that describes an
-// app which has moved on. So does a screen that quietly lost every control, or a
+// A stale analysis still parses and still reads as context — context for an app which
+// has moved on. So does a screen that quietly lost every control, or a
 // collection with no key column. None of these throw; all of them waste a day. This
 // gate turns each into an exit code.
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
@@ -10,11 +10,28 @@ import { execFileSync } from 'node:child_process';
 import { homedir } from 'node:os';
 import type { AppModel } from './model-types.ts';
 import { SECTION_OWNER, type Section } from '../analysis/analysis-types.ts';
-import { modelFromAnalysis } from '../framework-generator/emit/emit.ts';
 import { ROOT } from '../config/profile.mjs';
 import { pathToFileURL } from 'node:url';
 
 interface Finding { level: 'error' | 'warning'; message: string }
+
+/** The compiled sections of analysis.json, in the shape the checks read. */
+export function modelFromAnalysis(appDir = ROOT): AppModel {
+  const analysis = JSON.parse(readFileSync(join(appDir, 'analysis.json'), 'utf8'));
+  return {
+    app: analysis.app,
+    components: analysis.components,
+    screens: analysis.screens.map((s: any) => ({
+      name: s.name, path: s.path, url: s.url, title: s.title,
+      aliases: s.aliases, identity: s.identity, source: s.source,
+      crawled: s.crawled, uses: s.uses ?? [], actions: s.actions ?? [],
+      unverified: s.unverified ?? 0,
+      testability: s.testability,
+    })),
+    api: analysis.api,
+    stats: analysis.stats,
+  } as AppModel;
+}
 
 const expand = (p: string) => (p.startsWith('~') ? join(homedir(), p.slice(1)) : p);
 
@@ -114,7 +131,7 @@ export function checkModel(appDir: string, model: AppModel): Finding[] {
 
   // 6. The crawl is what makes a locator real. A model with none is a route list.
   if (!model.stats.crawled) {
-    warn('nothing was crawled, so every page object is a URL and nothing else');
+    warn('nothing was crawled, so every screen is a URL and nothing else');
   }
 
   // Whether controls can be addressed BY NAME is what this warning is about, so it reads
@@ -134,7 +151,7 @@ export function checkModel(appDir: string, model: AppModel): Finding[] {
   if (namedRatio > 0.5) {
     warn(`${Math.round(namedRatio * 100)}% of crawled controls could not be addressed by name ` +
          `(${unaddressable} of ${addressable + unaddressable}). ` +
-         `Check the app for an accessible-name problem before trusting the page objects.`);
+         `Check the app for an accessible-name problem before trusting the screens' controls.`);
   }
   return out;
 }

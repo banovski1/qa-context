@@ -1,7 +1,7 @@
 // Give a second application its own checkout.
 //
-// The pipeline is deliberately single-app: one `.env`, one `analysis.json`, one
-// `generated-framework/`, all at the root, with no `--app` anywhere. That is the whole
+// The pipeline is deliberately single-app: one `.env` and one `analysis.json`, both at
+// the root, with no `--app` anywhere. That is the whole
 // point — nothing in a path or a command line has to say which application is meant.
 //
 // The cost is that two applications cannot share a working tree, so this creates a git
@@ -62,7 +62,8 @@ done.
 
   cd .worktrees/${slug}
   $EDITOR .env          # every value: it still describes the app you copied from
-  npm run setup
+  npm install
+  /setup                # in Claude Code
 
 The .env starts as a copy of .env.example, which is filled in for whatever app this
 branch was cut from. Change APP_NAME, APP_BASE_URL, APP_REPO_PATH, APP_SESSION and the

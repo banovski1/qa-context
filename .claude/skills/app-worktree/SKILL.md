@@ -5,8 +5,8 @@ description: Use when the user wants to analyse or test a second application —
 
 # app-worktree
 
-The pipeline is single-app on purpose. One `.env`, one `analysis.json`, one
-`generated-framework/`, all at the repository root, and no `--app` flag anywhere.
+The pipeline is single-app on purpose. One `.env` and one `analysis.json`, both at the
+repository root, and no `--app` flag anywhere.
 Nothing in a command line has to say which application is meant, because there is
 only one.
 
@@ -33,14 +33,14 @@ scripts; only the app-specific files differ.
 ```bash
 cd .worktrees/<slug>
 $EDITOR .env        # APP_NAME, APP_BASE_URL, APP_REPO_PATH, APP_SESSION, AUTH_*
-npm run setup
+npm install
 ```
 
 Every value in the copied `.env` still describes the previous app. `APP_SESSION` in
 particular must differ — two crawls sharing a playwright-cli session name will collide.
 
 Then run the normal pipeline from that directory: the analysis skills, `npm run crawl:map`,
-`npm run crawl:deep`, `npm run compile`, `npm run check`, `npm run generate`.
+`npm run crawl:deep`, `npm run compile`, `npm run check` — or `/setup`, which runs them all.
 
 ## Removing one
 

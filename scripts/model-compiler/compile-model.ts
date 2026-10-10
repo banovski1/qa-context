@@ -14,6 +14,7 @@ import { readAnalysis, writeSection } from '../analysis/analysis-file.ts';
 import { scoreScreens, verdictFor } from '../analysis/testability.ts';
 import { deriveResources, tagEndpoints } from './api-resources.ts';
 import { mergeRecordings } from './merge-recordings.ts';
+import { mountPrefix } from './mount.ts';
 import type { AppModel, ComponentDef, ComponentUse, Screen, LocatorSpec } from './model-types.ts';
 import { pathToFileURL } from 'node:url';
 
@@ -499,8 +500,16 @@ export function compile(appDir: string, now = newestInput(appDir)): AppModel {
   }
 
   // Routes are the union: declared + crawled, matched on path.
+  // The source declares routes relative to the app's mount ("/pim/viewEmployeeList"); the
+  // crawl records `location.pathname` ("/web/index.php/pim/viewEmployeeList"), and the
+  // emitted `goto(path)` resolves a leading slash against the origin. So a declared route
+  // takes the base URL's path as its prefix, or the two halves never join.
+  const mount = mountPrefix(dossier.baseUrl);
   const declaredByPath = new Map<string, any>();
-  for (const r of routes.routes ?? []) declaredByPath.set(r.path, r);
+  for (const r of routes.routes ?? []) {
+    const full = mount && !r.path.startsWith(mount + '/') ? mount + r.path : r.path;
+    declaredByPath.set(full, { ...r, path: full });
+  }
   // A crawl reaches concrete records ("/#User/view/1"); the source declares the shape
   // ("/#User/view/{id}"). They are one screen, and the declared path is its identity —
   // an id is a record slot, never a page. The concrete URL survives as an alias.
@@ -605,7 +614,7 @@ export function compile(appDir: string, now = newestInput(appDir)): AppModel {
     screens.push({
       name: names.get(path)!,
       path,
-      url: crawl?.url ?? new URL(path.replace(/^\//, ''), dossier.baseUrl).toString(),
+      url: crawl?.url ?? new URL(path, dossier.baseUrl).toString(),
       title: crawl?.title ?? decl?.path ?? path,
       aliases: aliases.get(path) ?? [],
       identity: { urlPattern: path, heading: crawl?.headings?.[0]?.text ?? null },
@@ -745,10 +754,10 @@ export function foldIntoAnalysis(model: AppModel): { write: number; total: numbe
       // transitions a crawl never could — "clicking Apply lands you on the leave list" —
       // and rebuilding `actions` from the crawl alone would discard them every compile.
       // A recording names its destination by path, because when the merge ran no page
-      // had a class name yet. `leadsTo` in an emitted action is a page-object name, so
+      // had a class name yet. `leadsTo` in a compiled action is a screen name, so
       // resolve it here — the one place both are in hand. An action whose destination is
-      // not a known screen is dropped: the generator would emit a wait on a page object
-      // that does not exist.
+      // not a known screen is dropped: it would point a reader at a screen that does not
+      // exist.
       actions: [
         ...page.actions,
         ...(seen?.actions ?? [])

@@ -1,5 +1,4 @@
 node_modules/
-scripts/framework-generator/node_modules
 
 *.log
 
@@ -15,19 +14,11 @@ docs/superpowers/
 .probe.js
 
 # ─── Everything the pipeline produces ───────────────────────────────────────
-# A fresh checkout starts empty. You fill in .env, run the pipeline, and these
-# appear. None of them belongs to the repo: analysis.json describes YOUR app,
-# and generated-framework/ is yours to maintain by hand from the moment it is
-# written. Committing them here would ship one person's OrangeHRM crawl to
-# everyone who clones.
+# A fresh checkout starts empty. You fill in .env, run the pipeline, and this
+# appears. It does not belong to the repo: analysis.json describes YOUR app, and
+# committing it here would ship one person's OrangeHRM crawl to everyone who clones.
 analysis.json
-framework-draft.md
-.framework-draft.lock
-generated-framework/
 
-# Importing emit/runtime/support/logger.ts (its own tests, e.g.) creates this at the
-# repo root exactly as it does inside a generated project: the log destination path is
-# relative to whatever process imports it.
 /test-results/
 
 # Raw crawl output. Working material for the explorer, distilled into analysis.json's

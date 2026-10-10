@@ -2,11 +2,10 @@
 /**
  * Pour a recording back into the analysis.
  *
- * This closes the loop the confidence score opens. `test-preconditions` refuses a
- * journey whose screens score below 0.7 and asks for a recording; before this existed
- * the recording was made, saved, and counted for nothing beyond a score bump — so the
- * second recording of an app cost what the first one did, and the framework never got
- * better at the app it was pointed at.
+ * This closes the loop the confidence score opens. A screen scoring below 0.7 asks for
+ * a recording; before this existed the recording was made, saved, and counted for
+ * nothing beyond a score bump — so the second recording of an app cost what the first
+ * one did, and the analysis never got better at the app it was pointed at.
  *
  *   npx tsx scripts/analysis/ingest-recording.ts \
  *     recordings/apply-leave-20260913-100000.json

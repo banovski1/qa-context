@@ -1,12 +1,12 @@
 ---
 name: setup
-description: Use for "/setup", "set this up", "analyse my app", "get me started" — runs the whole pipeline end to end from a filled-in .env, installing what is missing and stopping with a specific fix when something is wrong.
+description: Use for "/setup", "set this up", "analyse my app", "get me started" — runs the whole analysis end to end from a filled-in .env to a checked analysis.json, installing what is missing and stopping with a specific fix when something is wrong.
 ---
 
 # setup
 
-The user has filled in `.env`. Everything from there to a generated test framework is
-your job. They should not have to know the seven steps in README.md.
+The user has filled in `.env`. Everything from there to a complete, checked
+`analysis.json` is your job. They should not have to know the steps in RUNBOOK.md.
 
 **Run the phases in order. Stop at the first blocking failure and tell the user exactly
 what to change** — a vague "setup failed" wastes the whole point of this skill.
@@ -41,14 +41,7 @@ agreement, since it is a global install on their machine.
 ## Phase 1 — install
 
 ```bash
-npm run setup            # the generator's toolchain
-```
-
-Only if preflight warned the generated project is missing its dependencies, and only once
-there is something to run:
-
-```bash
-cd generated-framework && npm install && npx playwright install chromium
+npm install
 ```
 
 ## Phase 2 — read the source (three skills, in order)
@@ -74,9 +67,9 @@ This executes the login `app-api` read out of the source against the running app
 calls a protected endpoint twice — once anonymously, once with the credential — and only
 stamps `verified` when the first is refused and the second admitted.
 
-A `failed` verdict is **not** a reason to stop the whole setup: the UI half of the pipeline
-still works. Report it and continue, but say plainly that API preconditions are unavailable
-until it passes, so `test-preconditions` will build setup through the browser instead.
+A `failed` verdict is **not** a reason to stop the whole setup: the UI half of the analysis
+still works. Report it and continue, but say plainly that until it passes, nothing may
+build test setup on that API login.
 
 ## Phase 4 — crawl the running app
 
@@ -111,37 +104,20 @@ npm run check       # staleness, naming, addressability
 `check` is the one to read out. `0 error(s)` means the contract is complete; warnings name
 a step that did not run.
 
-### Draft the framework, and stop
-
-```bash
-npm run draft
-```
-
-Then tell the user, in your own words: the draft is at `framework-draft.md`, it describes
-every page object and component that will be written, and nothing has been generated yet.
-Ask them to read it, then approve it with `npm run draft -- --approve`.
-
-Approving is theirs — the generator runs once, and there is no undo but `rm -rf`. Once
-they have approved, building it is the `framework` skill's job, not yours: it verifies
-the lock still matches before it spends anything. Say so and stop here.
-
 ## Phase 6 — report
 
 Tell the user, concretely:
 
-- how many screens were found, and **how many score >= 0.7** (`npm run check` prints this,
-  and `testability.summary` holds it). That number is what they can write tests against
-  once generated.
-- whether the API login verified, and what that means for test preconditions.
+- how many screens were found, how many were crawled, and **how many score >= 0.7**
+  (`npm run check` prints this, and `testability.summary` holds it). That number is how
+  much of the app an agent can write tests against from `analysis.json` alone.
+- what the map skipped and why (`map.notes`), and any screen the deep crawl failed on.
+- whether the API login verified, and what that means for test setup.
 - anything preflight warned about that is still true.
-- that `framework-draft.md` is written and waiting: read it, then
-  `npm run draft -- --approve`. After that, `/framework` builds it — generate, install,
-  typecheck, smoke — and reports whether it compiles and runs.
 
 If many screens score low, say so and name the remedy: record the flow with the
 `app-recorder` skill, then `npm run record:ingest -- <the .json it wrote>` and
-`npm run compile` (which will require a fresh `npm run draft`, since recompiling changes
-what it would render). A low score is a request for evidence, not a defect in their app —
+`npm run compile`. A low score is a request for evidence, not a defect in their app —
 and each recording makes the next one smaller.
 
 ---
@@ -150,15 +126,9 @@ and each recording makes the next one smaller.
 
 - **Never edit `analysis.json` by hand** to make a phase appear to pass. The fix is
   always upstream: re-run the skill, then the compiler.
-- **Never run `npm run generate` yourself, and never approve a draft.** This skill ends
-  at the draft. Generating is the `framework` skill's job and approving is the user's —
-  it runs once, with no undo but `rm -rf generated-framework/`.
-- **Never pass `--force`.** It skips the draft/approval gate and exists for CI, where
-  there is no human to approve a draft. Using it to get past an unapproved draft is
-  exactly what the gate exists to prevent.
 - **Never put credentials anywhere but `.env`.** If a phase needs a password, it reads
   `APP_USERNAME`/`APP_PASSWORD` from the environment.
-- **`playwright-cli` is the only thing that drives a browser.** The Playwright MCP tools
-  are blocked by a hook.
+- **`playwright-cli` is the only thing that drives a browser.** Never the Playwright MCP
+  tools.
 - If a phase fails for a reason preflight could have caught, that is a gap in
   `scripts/setup/preflight.mjs` — say so, so the check can be added.

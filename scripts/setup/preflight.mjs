@@ -6,7 +6,7 @@
 //
 //   node scripts/setup/preflight.mjs [--json]
 
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { ROOT, loadEnv } from '../config/profile.mjs';
@@ -156,10 +156,10 @@ if (Number(node.split('.')[0]) < 20) {
   ok('node', `v${node}`);
 }
 
-if (existsSync(join(ROOT, 'scripts/framework-generator/node_modules'))) {
-  ok('generator toolchain', 'installed');
+if (existsSync(join(ROOT, 'node_modules/tsx'))) {
+  ok('toolchain', 'installed');
 } else {
-  warn('generator toolchain', 'scripts/framework-generator/node_modules is missing', 'npm run setup');
+  warn('toolchain', 'node_modules is missing', 'npm install');
 }
 
 const pwCli = version('playwright-cli', ['--version']) ?? version('npx', ['--no-install', 'playwright', '--version']);
@@ -170,12 +170,6 @@ if (pwCli) {
       'npm install -g @playwright/cli@latest   - it is the only thing that drives a browser here.');
 }
 
-if (existsSync(join(ROOT, 'generated-framework/node_modules'))) {
-  ok('generated project', 'dependencies installed');
-} else {
-  warn('generated project', 'generated-framework/node_modules is missing',
-       'cd generated-framework && npm install && npx playwright install chromium - needed only to RUN tests.');
-}
 
 // -- 7. What already exists ----------------------------------------------------
 const analysisPath = join(ROOT, 'analysis.json');
@@ -191,7 +185,7 @@ if (!existsSync(analysisPath)) {
   if (analysis) {
     const trim = (u) => String(u ?? '').replace(/\/$/, '');
     // An artifact describing a different app is the one failure that looks like success:
-    // compile and generate would both run happily against the wrong model.
+    // the compiler would run happily against the wrong model.
     if (analysis.app?.baseUrl && env.APP_BASE_URL && trim(analysis.app.baseUrl) !== trim(env.APP_BASE_URL)) {
       fix('analysis.json', `it describes ${analysis.app.baseUrl}, but .env says ${env.APP_BASE_URL}`,
           'This artifact belongs to a different application. Delete it and re-run the analysis, or give '
@@ -207,22 +201,6 @@ if (!existsSync(analysisPath)) {
         : `complete - ${analysis.screens?.length ?? 0} screens`);
     }
   }
-}
-
-// -- 8. An existing generated framework -----------------------------------------
-const outputDir = join(ROOT, 'generated-framework');
-const RUN_OUTPUT = new Set(['node_modules', 'test-results', 'playwright-report', '.auth', '.git']);
-if (existsSync(outputDir)) {
-  const remaining = readdirSync(outputDir).filter((entry) => !RUN_OUTPUT.has(entry));
-  if (remaining.length) {
-    warn('generated framework', 'there is already a generated framework at generated-framework/',
-         '/setup only produces a draft and stops - /framework will refuse to overwrite an existing '
-         + 'output, so this is still worth running. To regenerate anyway, remove the directory first.');
-  } else {
-    ok('generated framework', 'not yet built - /setup will produce it');
-  }
-} else {
-  ok('generated framework', 'not yet built - /setup will produce it');
 }
 
 report();

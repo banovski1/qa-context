@@ -10,15 +10,14 @@
 
 - [ ] `npm run pipeline:test` passes
 - [ ] `npm run pipeline:typecheck` passes
-- [ ] `npm run hooks:test` passes
 - [ ] No selector outside the component layer
 - [ ] No hand-edit of `analysis.json` or `recordings/`
 - [ ] No real credential anywhere in the diff
 
 ## Apps this was validated against
 
-<!-- A generator change validated against one application has not been
-     validated. Name the apps you regenerated, or write "N/A — not a generator
+<!-- A crawler or compiler change validated against one application has not been
+     validated. Name the apps you re-analysed, or write "N/A — not a pipeline
      change". -->
 
 - [ ] N/A

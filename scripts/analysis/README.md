@@ -6,7 +6,7 @@ There were sixteen files here, five of them markdown reports, plus a separate
 `app-model.json` holding the compiled half. Answering "what can I address on this
 screen?" meant opening two of them and joining by path.
 
-## Nine sections, always all nine
+## Ten sections, always all ten
 
 | section | owner | holds |
 | --- | --- | --- |
@@ -18,6 +18,7 @@ screen?" meant opening two of them and joining by path.
 | `components` | compile-model | the locator layer. **The only place a selector may appear** |
 | `screens` | app-explorer, enriched by compile-model | one entry per screen |
 | `testability` | compile-model | the roll-up, and the recordings that raised it |
+| `recordings` | app-recorder (`ingest-recording.ts`) | what a human's recording saw: steps, routes, and the requests the flow provoked |
 | `stats` | compile-model | the counts a review reads first |
 
 A section present but empty means its skill has not run. `check-model.ts` names it.

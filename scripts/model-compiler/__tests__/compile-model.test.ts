@@ -251,6 +251,22 @@ test('a crawled record URL folds onto its declared parameterised route', () => {
   assert.ok(!m.screens.some(s => s.path === '/contacts/42'));
 });
 
+test('an app served below a path joins its declared routes to what the crawl saw', () => {
+  // OrangeHRM: the source declares /pim/viewEmployeeList, the browser is at
+  // /web/index.php/pim/viewEmployeeList, and goto() resolves a leading slash on the origin.
+  const dir = fixture();
+  const analysis = JSON.parse(readFileSync(join(dir, 'analysis.json'), 'utf8'));
+  analysis.app.baseUrl = 'https://demo.test/web/index.php/';
+  for (const s of analysis.screens) s.path = '/web/index.php' + s.path;
+  writeFileSync(join(dir, 'analysis.json'), JSON.stringify(analysis));
+  const m = compile(dir, 'T');
+  const contacts = m.screens.find(s => s.path === '/web/index.php/contacts')!;
+  assert.equal(contacts.crawled, true);
+  assert.equal(contacts.name, 'ContactsPage');
+  assert.ok(!m.screens.some(s => s.path === '/contacts'));
+  assert.equal(m.screens.find(s => s.path === '/web/index.php/reports')!.url, 'https://demo.test/web/index.php/reports');
+});
+
 test('compiling twice over its own output changes nothing', () => {
   // The compiler writes back into the section it reads, so a declared-but-unreached
   // screen it added last run must not be counted as something a crawl found this one.

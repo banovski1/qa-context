@@ -62,9 +62,9 @@ and each is cheap to spot in source and expensive to discover in a failing test.
   "notes": [] }
 ```
 
-`template` uses `{label}` as the placeholder and is emitted once into the generated
-framework's component layer — it is one of the very few places an app-specific selector
-is allowed to exist, and it never reaches a page object.
+`template` uses `{label}` as the placeholder and belongs to the component layer — it is
+one of the very few places an app-specific selector is allowed to exist, and it never
+reaches a screen entry.
 
 ## Rules
 

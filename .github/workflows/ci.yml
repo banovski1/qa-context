@@ -23,13 +23,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run setup
       - name: tests
         run: npm run pipeline:test
       - name: typecheck
         run: npm run pipeline:typecheck
-      - name: write-guard rules
-        run: npm run hooks:test
 
   secrets:
     name: no credentials in the diff
@@ -51,14 +48,14 @@ jobs:
       - name: no pipeline output is committed
         run: |
           fail=0
-          for f in analysis.json framework-draft.md .framework-draft.lock; do
+          for f in analysis.json; do
             if git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
               echo "::error::$f is committed. It describes one person's app; it must stay gitignored."
               fail=1
             fi
           done
-          if [ -n "$(git ls-files generated-framework)" ]; then
-            echo "::error::generated-framework/ is committed. A clone must start fresh."
+          if [ -n "$(git ls-files recordings .crawl)" ]; then
+            echo "::error::recordings/ or .crawl/ is committed. A recording can carry a real credential."
             fail=1
           fi
           exit $fail

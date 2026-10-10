@@ -1,8 +1,7 @@
 # Check out LF on every platform.
 #
-# framework-generator writes LF. With Windows' core.autocrlf=true git would check
-# files out as CRLF, and the very next generator run would rewrite every one of
-# them — showing as "modified" with no content change at all. Pinning eol=lf keeps
-# the working tree and the generator's output byte-identical, so a re-run after an
-# unchanged map really does report zero writes.
+# The pipeline writes LF. With Windows' core.autocrlf=true git would check files
+# out as CRLF, and the next run would rewrite every one of them — showing as
+# "modified" with no content change at all. Pinning eol=lf keeps a re-run after an
+# unchanged app byte-identical.
 * text=auto eol=lf

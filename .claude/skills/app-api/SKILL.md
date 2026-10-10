@@ -112,7 +112,7 @@ Read the verdict as instructions:
 
 **Rule: never hand-edit `authVerification`.** It is written by the verifier or it is
 absent. An auth block with no `authVerification` is unproven, and any skill reading
-the `api` section — `test-preconditions` above all — must treat it that way.
+the `api` section — or any agent building test setup on it — must treat it that way.
 
 If the tool cannot express the app's flow, **fix the tool, not the app's entry**. It
 knows token, Basic and form-session logins and no application names; a new shape belongs

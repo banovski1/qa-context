@@ -1,6 +1,6 @@
 # Runbook
 
-`/setup` runs every phase below in order, and `/framework` does the generate half.
+`/setup` runs every phase below in order and ends at a checked `analysis.json`.
 Reach for a single phase directly when you are re-running one — a fresh crawl after
 the app changed, say — or when you want to see what failed.
 
@@ -41,7 +41,7 @@ hypothesis; this makes it a fact.
 
 A login answering `200` is not evidence. A re-rendered login page answers `200` too.
 
-Until it says `verified`, no agent will build test setup on that login.
+Until it says `verified`, nothing may build test setup on that login.
 
 ### 3 · Crawl the running app — two passes
 
@@ -84,31 +84,20 @@ The merge is **additive, and the crawl always wins.** A recording proves a human
 addressed one element once; it cannot prove no *second* element carries the same handle,
 which is the one thing the crawl exists to establish.
 
-### 6 · Draft, then generate — once
+### 6 · Hand it to an agent
 
-```bash
-npm run draft                # writes framework-draft.md; writes no code
-npm run draft -- --approve   # records that a human read it
-npm run generate             # writes generated-framework/ — once, and only once
-```
+`analysis.json` is the deliverable. Point the agent that writes your tests at it and tell
+it where to look:
 
-The draft is every page object, component and API resource the generator would write,
-with the testability score and the evidence behind each control. It exists so the
-decision to generate — which cannot be undone short of `rm -rf generated-framework/` —
-is made by a human who read what will be built.
+- `map` — where a screen is, and how a person gets there through the menus.
+- `screens[]`, found by `path` — the controls on that screen, what each is called, which
+  ones are destructive, what a click proved it leads to, and `testability`.
+- `components` — how each kind of control is addressed. The only place a selector lives.
+- `api.resources` and `api.authVerification` — how to create test data without the UI,
+  and whether the API login is proven.
 
-Recompiling the analysis changes the draft, which expires the approval automatically.
-
-> `--force` skips the draft gate entirely. It exists for CI, where there is no human to
-> approve. Never reach for it to get past an unapproved draft yourself.
-
-### 7 · Run what came out
-
-```bash
-cd generated-framework
-npm install && npx playwright install chromium
-npx tsc --noEmit && npx playwright test   # credentials come from the root .env
-```
+A screen below 0.7 is the analysis telling the agent it does not know enough yet — record
+the flow before asking for a test against it.
 
 ---
 
@@ -135,7 +124,7 @@ says so in those words.
 **Start with `npm run preflight`.** Most setup failures are a `.env` value, a missing
 clone or a missing tool, and it names them directly. It also catches the failure that
 otherwise looks like success: an `analysis.json` left over from a *different*
-application, which compile and generate would both happily run against.
+application, which the compiler would happily run against.
 
 | symptom | what it means |
 | --- | --- |
@@ -143,15 +132,11 @@ application, which compile and generate would both happily run against.
 | the crawl found 0 modules | it is not logged in. Check `AUTH_*`, especially `AUTH_READY_WHEN` |
 | `check` says a section is missing | that skill has not run. It names which one |
 | `verify-auth` says `failed` | the login read out of your source is wrong. The observations show which step broke |
-| a test fails with `AMBIGUOUS` | the locator matches more than one element — add a scoped accessor in the page object |
-| a test fails with `NOT_FOUND` | the app moved, or the analysis is stale. Re-crawl |
-| a page object is nearly empty | the crawl never reached that screen. Check `testability` in `analysis.json` |
-| every failure reads `TIMED_OUT` | `actionTimeout` is not shorter than the test timeout. It must be, or nothing gets diagnosed |
-
-Every failure names the component, the screen, and the file to re-crawl. It is one line
-in `generated-framework/test-results/framework.log.jsonl`, which holds a JSON record for
-**every** interaction a component makes, not only the ones that fail — so the lines just
-before a failure show how the control was being addressed right up to the step that broke.
+| the map stopped short in a module | its budget ran out. `map.notes` names what was skipped; raise `CRAWL_MAX_SCREENS_PER_MODULE` or `--per-module-seconds` |
+| the deep crawl reached few screens | it only follows `<a href>`, and most business apps do not link their screens. Add the map's screen URLs to `CRAWL_SEED_ROUTES` |
+| a screen scores high but holds only navigation | the page rendered nothing for this user — no data, no permission. Record the flow, or crawl as a user who has the data |
+| a screen is `crawled: false` | the source declares it and no crawl reached it — usually a form behind an "Add" or "Edit" button. Record it |
+| `check` says the clone moved | the analysis describes an older commit. Re-run the skills, then compile |
 
 ---
 
@@ -160,7 +145,6 @@ before a failure show how the control was being addressed right up to the step t
 ```bash
 npm run pipeline:test        # the compiler and analysis suites
 npm run pipeline:typecheck
-npm run hooks:test           # the write-guard rule set
 ```
 
-All three run in CI on every pull request. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Both run in CI on every pull request. See [CONTRIBUTING.md](CONTRIBUTING.md).

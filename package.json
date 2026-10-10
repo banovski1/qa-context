@@ -2,14 +2,14 @@
   "name": "qa-harness",
   "version": "1.0.0",
   "private": true,
-  "description": "Point it at a web app - its source and a running instance - and get a Playwright framework whose page objects contain no locators at all.",
+  "description": "Point it at a web app - its source and a running instance - and get one analysis.json: every screen, every control, a proven locator for each, and the API behind them. Context an LLM can write tests from.",
   "keywords": [
     "playwright",
     "test-automation",
-    "page-object",
-    "codegen",
     "qa",
-    "end-to-end",
+    "app-analysis",
+    "llm-context",
+    "crawler",
     "claude-code",
     "ai-agents"
   ],
@@ -28,7 +28,6 @@
   },
   "type": "module",
   "scripts": {
-    "setup": "npm install --prefix scripts/framework-generator",
     "preflight": "node scripts/setup/preflight.mjs",
     "crawl:map": "node .claude/skills/app-explorer/lib/map.mjs",
     "crawl:deep": "node .claude/skills/app-explorer/lib/explore.mjs",
@@ -36,12 +35,9 @@
     "record:ingest": "tsx scripts/analysis/ingest-recording.ts",
     "compile": "tsx scripts/model-compiler/compile-model.ts",
     "check": "tsx scripts/model-compiler/check-model.ts",
-    "generate": "tsx scripts/framework-generator/emit/emit.ts",
-    "draft": "tsx scripts/framework-generator/emit/draft.ts",
     "app:worktree": "node scripts/worktree/new-app.mjs",
-    "pipeline:test": "tsx --test scripts/config/*.test.mjs .claude/skills/app-explorer/lib/*.test.mjs scripts/model-compiler/__tests__/*.test.ts scripts/analysis/__tests__/*.test.ts scripts/framework-generator/__tests__/*.test.ts scripts/api-auth/__tests__/*.test.ts",
-    "pipeline:typecheck": "npm run typecheck --prefix scripts/framework-generator",
-    "hooks:test": "node .claude/hooks/__fixtures__/run.mjs"
+    "pipeline:test": "tsx --test scripts/config/*.test.mjs .claude/skills/app-explorer/lib/*.test.mjs scripts/model-compiler/__tests__/*.test.ts scripts/analysis/__tests__/*.test.ts scripts/api-auth/__tests__/*.test.ts",
+    "pipeline:typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
