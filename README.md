@@ -1,6 +1,9 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="qa-context" width="440">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+  <img src="assets/logo.png" alt="qa-context" width="440">
+</picture>
 
 **Point it at a web app. Get one file that tells an agent everything it needs to write a test.**
 

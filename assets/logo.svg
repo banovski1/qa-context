@@ -1,24 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="303" viewBox="0 0 880 303">
+  <style>
+    .qa { fill: #1F55B0 } .dash { fill: #20A58A } .ctx { fill: #142B47 }
+    .ring0 { stop-color: #2557B5 } .ring1 { stop-color: #0B3A86 }
+    .handle0 { stop-color: #2E63C4 } .handle1 { stop-color: #123F8E } .loop { fill: #123F8E }
+    @media (prefers-color-scheme: dark) {
+      .qa { fill: #5B8EF0 } .ctx { fill: #E6EDF7 } .dash { fill: #2BC29F }
+      .ring0 { stop-color: #3D74D6 } .ring1 { stop-color: #1C4FA8 }
+      .handle0 { stop-color: #4A7FDD } .handle1 { stop-color: #245BB8 } .loop { fill: #245BB8 }
+    }
+  </style>
   <defs>
     <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2557B5"/>
-      <stop offset="1" stop-color="#0B3A86"/>
+      <stop offset="0" class="ring0"/>
+      <stop offset="1" class="ring1"/>
     </linearGradient>
     <linearGradient id="handle" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2E63C4"/>
-      <stop offset="1" stop-color="#123F8E"/>
+      <stop offset="0" class="handle0"/>
+      <stop offset="1" class="handle1"/>
     </linearGradient>
     <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0B2A5E" flood-opacity="0.18"/>
     </filter>
   </defs>
 
-  <rect width="880" height="303" fill="#FFFFFF"/>
-
   <!-- handle, with the strap loop -->
   <g transform="translate(196 214) rotate(45)" filter="url(#soft)">
     <rect x="0" y="-25" width="92" height="50" rx="12" fill="url(#handle)"/>
-    <rect x="40" y="-33" width="28" height="66" rx="9" fill="#123F8E" stroke="#FFFFFF" stroke-width="6"/>
+    <rect x="40" y="-33" width="28" height="66" rx="9" class="loop" stroke="#FFFFFF" stroke-width="6"/>
   </g>
 
   <!-- lens -->
@@ -42,6 +50,6 @@
 
   <!-- wordmark -->
   <text x="262" y="172" font-family="'Century Gothic', Outfit, 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="112" letter-spacing="-1">
-    <tspan fill="#1F55B0">qa</tspan><tspan fill="#20A58A">-</tspan><tspan fill="#142B47">context</tspan>
+    <tspan class="qa">qa</tspan><tspan class="dash">-</tspan><tspan class="ctx">context</tspan>
   </text>
 </svg>
